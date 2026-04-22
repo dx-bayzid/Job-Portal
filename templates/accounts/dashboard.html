@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard | Django Job Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto my-10 px-4">
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back, {{ request.user.full_name|default:request.user.username }}!</h1>
+    <p class="text-gray-500 mt-1 text-sm">Here is what's happening with your account today.</p>
+  </div>
+
+  {% if request.user.role == 'recruiter' %}
+  {# ══════════════════════════ RECRUITER DASHBOARD ═══════════════════════════ #}
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4 border-l-4 border-l-purple-500">
+      <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-gray-500">Active Jobs</p>
+        <p class="text-2xl font-extrabold text-gray-900">{{ jobs.count|default:"0" }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+      <h3 class="text-lg font-bold text-gray-900">Your Job Postings</h3>
+      <a href="{% url 'post_job' %}" class="text-sm font-bold bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+        + Post New Job
+      </a>
+    </div>
+    
+    <div class="divide-y divide-gray-100">
+      {% for job in jobs %}
+        <div class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-gray-50 transition-colors">
+          <div>
+            <h4 class="text-md font-bold text-gray-900">{{ job.title }}</h4>
+            <div class="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500">
+              <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span> {{ job.get_job_type_display }}</span>
+              <span>•</span>
+              <span>{{ job.location }}</span>
+              <span>•</span>
+              <span>Ends: {{ job.deadline|date:"M d, Y" }}</span>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="#" class="px-4 py-2 text-sm font-semibold text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition">View Applicants</a>
+            <a href="#" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Edit</a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="p-10 text-center text-gray-500">
+          <p>You haven't posted any jobs yet.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  {% else %}
+  {# ══════════════════════════ JOB SEEKER DASHBOARD ═══════════════════════════ #}
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4 border-l-4 border-l-blue-500">
+      <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-gray-500">Jobs Applied</p>
+        <p class="text-2xl font-extrabold text-gray-900">0</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8">
+    <div class="px-6 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-gray-900">Recent Applications</h3>
+      <a href="{% url 'job_list' %}" class="text-sm font-medium text-blue-600 hover:underline">Browse more jobs &rarr;</a>
+    </div>
+    
+    <div class="p-10 text-center text-gray-500">
+      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+      <p class="font-medium text-gray-600">No applications yet.</p>
+      <p class="text-sm mt-1">When you apply for jobs, they will appear here.</p>
+    </div>
+  </div>
+
+  {% endif %}
+</div>
+{% endblock %}

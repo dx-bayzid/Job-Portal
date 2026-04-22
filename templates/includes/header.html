@@ -6,12 +6,11 @@
       <a href="{% url 'job_list' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Find Jobs</a>
 
       {% if request.user.is_authenticated %}
-        
         {% if request.user.role == 'recruiter' %}
           <a href="{% url 'post_job' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Post a Job</a>
         {% endif %}
 
-        <a href="{% url 'profile' request.user.username %}" class="text-sm font-bold text-gray-800 hover:text-blue-600 transition-colors">Dashboard</a>
+        <a href="{% url 'dashboard' %}" class="text-sm font-bold text-gray-800 hover:text-blue-600 transition-colors">Dashboard</a>
         
         <a href="{% url 'profile' request.user.username %}" class="flex items-center gap-3 hover:bg-teal-700 hover:text-white px-3 py-1.5 rounded-lg transition duration-200 group">
           {% if request.user.profile_pic %}
@@ -19,18 +18,53 @@
           {% else %}
             <div class="w-9 h-9 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold border-2 border-teal-300 shadow-sm">{{ request.user.username|first|upper }}</div>
           {% endif %}
-
           <span class="font-semibold tracking-wide text-gray-700 group-hover:text-white transition-colors">
             {{ request.user.full_name|default:request.user.username }}
           </span>
         </a>
 
         <a href="{% url 'logout' %}" class="text-sm font-medium bg-red-50 text-red-600 px-4 py-2 rounded-md hover:bg-red-100 transition-colors">Logout</a>
-
       {% else %}
         <a href="{% url 'login' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Login</a>
         <a href="{% url 'register' %}" class="text-sm font-medium bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-sm">Register</a>
       {% endif %}
     </nav>
+
+    <button id="mobile-menu-btn" class="md:hidden flex items-center text-gray-600 hover:text-blue-600 focus:outline-none">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
   </div>
+
+  <nav id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-2 shadow-inner">
+    <a href="{% url 'job_list' %}" class="block py-2 text-sm font-medium text-gray-600 hover:text-blue-600">Find Jobs</a>
+    
+    {% if request.user.is_authenticated %}
+      {% if request.user.role == 'recruiter' %}
+        <a href="{% url 'post_job' %}" class="block py-2 text-sm font-medium text-gray-600 hover:text-blue-600">Post a Job</a>
+      {% endif %}
+      
+      <a href="{% url 'dashboard' %}" class="block py-2 text-sm font-bold text-gray-800 hover:text-blue-600">Dashboard</a>
+      <a href="{% url 'profile' request.user.username %}" class="block py-2 text-sm font-medium text-gray-600 hover:text-blue-600">My Profile</a>
+      <a href="{% url 'logout' %}" class="block py-2 text-sm font-medium text-red-600 hover:text-red-800 mt-2 border-t border-gray-100 pt-2">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="block py-2 text-sm font-medium text-gray-600 hover:text-blue-600">Login</a>
+      <a href="{% url 'register' %}" class="block py-2 text-sm font-medium text-blue-600 font-bold mt-2">Register</a>
+    {% endif %}
+  </nav>
 </header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+    menuIcon.classList.toggle('hidden');
+    closeIcon.classList.toggle('hidden');
+  });
+</script>

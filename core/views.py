@@ -149,30 +149,10 @@ def profile(request, username):
     return render(request, 'accounts/profile.html', context)
 
 @login_required
-def company_profile(request):
+def dashboard(request):
 
-    recruiter = Recruiter.objects.get(user=request.user)
-
-    if request.method == 'POST':
-        company_name = request.POST.get('company_name')
-        description = request.POST.get('description')
-        company_logo = request.FILES.get('company_logo')
-
-        recruiter.company_name = company_name
-        recruiter.description = description
-        
-        # Only update the logo if they actually uploaded a new one
-        if company_logo:
-            recruiter.company_logo = company_logo
-            
-        # 4. Save to the database
-        recruiter.save()
-        
-        messages.success(request, 'Company profile updated successfully!')
-        return redirect('profile', username= request.user.username)
-
-    # If it's a GET request, just pass the recruiter data to pre-fill the form
+    
     context = {
-        'recruiter': recruiter
+        'user': request.user
     }
-    return render(request, 'accounts/company_profile.html', context)
+    return render(request, 'accounts/dashboard.html', context)
