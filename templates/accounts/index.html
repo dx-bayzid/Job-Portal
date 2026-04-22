@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Django Job Portal{% endblock %}
+
+{% block content %}
+<section
+    class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl px-6 py-16 md:py-24 text-center text-white mb-12 shadow-lg">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">Find Your Dream Job Today</h1>
+    <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto">Discover thousands of job opportunities from top
+        companies and kickstart your career.</p>
+
+    <form action="#" method="GET"
+        class="max-w-4xl mx-auto bg-white rounded-lg md:rounded-full p-2 flex flex-col md:flex-row shadow-md gap-2">
+        <input type="text" name="q" placeholder="Job title, keywords, or company"
+            class="flex-grow px-4 py-3 md:py-0 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400">
+
+        <div class="hidden md:block w-px bg-gray-200 my-2"></div>
+
+        <input type="text" name="location" placeholder="City, state, or zip"
+            class="flex-grow px-4 py-3 md:py-0 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400">
+
+        <button type="submit"
+            class="bg-blue-600 text-white font-semibold px-8 py-3 rounded-md md:rounded-full hover:bg-blue-700 transition-colors">
+            Search Jobs
+        </button>
+    </form>
+</section>
+
+<section class="mb-16">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Popular Categories</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="#"
+            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all text-center group">
+            <div class="text-blue-600 mb-3 text-3xl group-hover:scale-110 transition-transform">💻</div>
+            <h3 class="font-semibold text-gray-800">Software Development</h3>
+            <p class="text-sm text-gray-500 mt-1">120+ Jobs</p>
+        </a>
+        <a href="#"
+            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all text-center group">
+            <div class="text-blue-600 mb-3 text-3xl group-hover:scale-110 transition-transform">🎨</div>
+            <h3 class="font-semibold text-gray-800">Design & Creative</h3>
+            <p class="text-sm text-gray-500 mt-1">85+ Jobs</p>
+        </a>
+        <a href="#"
+            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all text-center group">
+            <div class="text-blue-600 mb-3 text-3xl group-hover:scale-110 transition-transform">📈</div>
+            <h3 class="font-semibold text-gray-800">Sales & Marketing</h3>
+            <p class="text-sm text-gray-500 mt-1">200+ Jobs</p>
+        </a>
+        <a href="#"
+            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all text-center group">
+            <div class="text-blue-600 mb-3 text-3xl group-hover:scale-110 transition-transform">🎧</div>
+            <h3 class="font-semibold text-gray-800">Customer Support</h3>
+            <p class="text-sm text-gray-500 mt-1">50+ Jobs</p>
+        </a>
+    </div>
+</section>
+
+<section class="mb-16">
+    <div class="flex justify-between items-end mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Featured Jobs</h2>
+        <a href="{% url 'job_list' %}" class="text-blue-600 font-medium hover:underline">View all jobs &rarr;</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {% for job in jobs %}
+        <div
+            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full group">
+            <div class="flex items-start justify-between mb-4">
+                <div
+                    class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-xl font-bold text-blue-600">
+                    {{ job.company|slice:":1"|upper }}
+                </div>
+
+                <span
+                    class="{% if job.job_type == 'full_time' %}bg-green-100 text-green-700{% elif job.job_type == 'remote' %}bg-blue-100 text-blue-700{% elif job.job_type == 'part_time' %}bg-yellow-100 text-yellow-700{% else %}bg-purple-100 text-purple-700{% endif %} text-xs font-semibold px-2 py-1 rounded-full">
+                    {{ job.get_job_type_display }}
+                </span>
+            </div>
+
+            <div class="flex-grow">
+                <h3 class="text-lg font-bold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors">
+                    <a href="{% url 'job_details' job.id %}">{{ job.title }}</a>
+                </h3>
+                <p class="text-sm text-gray-500 mb-3">{{ job.company }}</p>
+
+                <div class="flex flex-wrap gap-2 text-sm text-gray-600 mb-4">
+                    <span class="flex items-center gap-1">📍 {{ job.location }}</span>
+                    <span class="flex items-center gap-1">💰 ${{ job.salary|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <a href="{% url 'job_details' job.id %}"
+                class="block w-full text-center bg-gray-50 text-blue-600 font-medium py-2 rounded-lg hover:bg-blue-600 hover:text-white transition-colors border border-gray-200 hover:border-transparent">
+                View Details
+            </a>
+        </div>
+
+        {% empty %}
+        <div class="col-span-full py-12 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+            <div class="text-4xl mb-3 opacity-50">📭</div>
+            <p class="text-gray-500 font-medium">No featured jobs available right now.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+
+<section class="bg-blue-50 rounded-2xl p-8 md:p-12 text-center border border-blue-100">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Are you an employer?</h2>
+    <p class="text-gray-600 mb-8 max-w-xl mx-auto">Get your job postings in front of thousands of qualified candidates.
+        Register as a recruiter to start hiring today.</p>
+    <a href="#"
+        class="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+        Post a Job Now
+    </a>
+</section>
+
+{% endblock %}

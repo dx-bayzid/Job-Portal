@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django Job Portal{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
+
+    {% include 'includes/header.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    {% if messages %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                {% for message in messages %}
+                    // Map Django message tags to SweetAlert icon types
+                    // Django tags: 'debug', 'info', 'success', 'warning', 'error'
+                    // SweetAlert icons: 'info', 'success', 'warning', 'error', 'question'
+                    
+                    let iconType = '{{ message.tags }}';
+                    
+                    // Fallback to error if Django tag is 'error' (Django uses 'error', SweetAlert uses 'error')
+                    if (iconType === 'error') {
+                        iconType = 'error';
+                    }
+
+                    // A nice, clean Toast notification
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+
+                    Toast.fire({
+                        icon: iconType,
+                        title: '{{ message }}'
+                    });
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <a href="{% url 'home' %}" class="text-2xl font-extrabold text-blue-600 tracking-tight">JobPortal</a>
+
+    <nav class="hidden md:flex items-center space-x-6">
+      <a href="{% url 'job_list' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Find Jobs</a>
+
+      {% if request.user.is_authenticated %}
+        
+        {% if request.user.role == 'recruiter' %}
+          <a href="{% url 'post_job' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Post a Job</a>
+        {% endif %}
+
+        <a href="{% url 'profile' request.user.username %}" class="text-sm font-bold text-gray-800 hover:text-blue-600 transition-colors">Dashboard</a>
+        
+        <a href="{% url 'profile' request.user.username %}" class="flex items-center gap-3 hover:bg-teal-700 hover:text-white px-3 py-1.5 rounded-lg transition duration-200 group">
+          {% if request.user.profile_pic %}
+            <img src="{{ request.user.profile_pic.url }}" alt="Profile Picture" class="w-9 h-9 rounded-full object-cover border-2 border-teal-200 shadow-sm" />
+          {% else %}
+            <div class="w-9 h-9 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold border-2 border-teal-300 shadow-sm">{{ request.user.username|first|upper }}</div>
+          {% endif %}
+
+          <span class="font-semibold tracking-wide text-gray-700 group-hover:text-white transition-colors">
+            {{ request.user.full_name|default:request.user.username }}
+          </span>
+        </a>
+
+        <a href="{% url 'logout' %}" class="text-sm font-medium bg-red-50 text-red-600 px-4 py-2 rounded-md hover:bg-red-100 transition-colors">Logout</a>
+
+      {% else %}
+        <a href="{% url 'login' %}" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Login</a>
+        <a href="{% url 'register' %}" class="text-sm font-medium bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-sm">Register</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
