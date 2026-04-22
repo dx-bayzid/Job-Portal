@@ -137,10 +137,12 @@ def profile(request, username):
 
     if request.user.role == 'recruiter':
         context = {
+            'user': request.user,
             'recruiter': recruiter
         }
     elif request.user.role == 'jobseeker':
         context = {
+            'user': request.user,
             'seeker' : seeker
         }
 
