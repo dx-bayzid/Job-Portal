@@ -141,30 +141,60 @@
                 </div>
 
                 <div class="mt-10 pt-6 border-t border-gray-100">
-                    {% if user.is_authenticated %}
-                    {% if user.role == 'jobseeker' %}
-                    <button
+                    {% if job.deadline < today %} <div
+                        class="block w-full bg-red-50 border border-red-100 text-red-600 text-center font-bold py-4 rounded-xl cursor-not-allowed">
+                        Deadline Passed - Applications Closed
+                </div>
+                {% else %}
+                {% if user.is_authenticated %}
+                {% if user.role == 'jobseeker' %}
+
+                {% if not user.jobseeker.cv %}
+                <a href="{% url 'profile' user.username %}"
+                    class="block w-full bg-orange-500 text-white text-center font-bold py-4 rounded-xl hover:bg-orange-600 transition-all shadow-lg shadow-orange-100 active:scale-[0.98]">
+                    Upload CV to Apply
+                </a>
+                <p class="text-center text-[11px] text-orange-500 mt-3 font-medium">
+                    A resume is required to apply for this position.
+                </p>
+
+                {% elif has_applied %}
+                <div
+                    class="flex justify-center items-center gap-2 w-full bg-green-50 text-green-700 text-center font-bold py-4 rounded-xl border border-green-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Already Applied
+                </div>
+                {% else %}
+                <form action="{% url 'apply_job' job.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit"
                         class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-[0.98]">
                         Apply Now
                     </button>
-                    <p class="text-center text-[11px] text-gray-400 mt-3 italic">
-                        Your profile will be shared with the recruiter.
-                    </p>
-                    {% elif user.role == 'recruiter' and user == job.recruiter.user %}
-                    <a href="#"
-                        class="block w-full bg-blue-50 text-blue-700 text-center font-bold py-4 rounded-xl hover:bg-blue-100 transition-colors">
-                        Manage Applicants
-                    </a>
-                    {% endif %}
-                    {% else %}
-                    <a href="{% url 'login' %}"
-                        class="block w-full bg-gray-900 text-white text-center font-bold py-4 rounded-xl hover:bg-black transition-all">
-                        Sign in to Apply
-                    </a>
-                    {% endif %}
-                </div>
+                </form>
+                <p class="text-center text-[11px] text-gray-400 mt-3 italic">
+                    Your profile and CV will be shared with the recruiter.
+                </p>
+                {% endif %}
+
+                {% elif user.role == 'recruiter' and user == job.recruiter.user %}
+                <a href="#"
+                    class="block w-full bg-blue-50 text-blue-700 text-center font-bold py-4 rounded-xl hover:bg-blue-100 transition-colors">
+                    Manage Applicants ({{ job.applications.count }})
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}"
+                    class="block w-full bg-gray-900 text-white text-center font-bold py-4 rounded-xl hover:bg-black transition-all">
+                    Sign in to Apply
+                </a>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Job
+from applications.models import Application
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
@@ -67,12 +69,16 @@ def job_list(request):
     return render(request, 'jobs/job_list.html', context)
 
 def job_details(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    has_applied = False
     
-    job = get_object_or_404(Job, id = job_id)
+    if request.user.is_authenticated and request.user.role == 'jobseeker':
+        has_applied = Application.objects.filter(job=job, applicant=request.user.jobseeker).exists()
     
     context = {
-        'job' : job,
-        
+        'job': job,
+        'today': timezone.now().date(), # Used to check the deadline
+        'has_applied': has_applied      # Used to swap the Apply button
     }
     
     return render(request, 'jobs/job_details.html', context)
